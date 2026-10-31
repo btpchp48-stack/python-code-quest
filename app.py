@@ -10,26 +10,44 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# คลังคำถาม 5 ด่าน (รวม 15 ข้อ)
+# คลังคำถาม 5 ด่าน พร้อมคำอธิบายตัวเลือก (Choices) ทั้งหมด
 QUESTIONS_BANK = {
     1: [
         {
             "question": "ข้อใดต่อไปนี้ตั้งชื่อตัวแปรใน Python ไม่ถูกต้อง?",
             "choices": {"A": "my_var", "B": "2variable", "C": "_data", "D": "user_name1"},
             "answer": "B",
-            "explanation": "ภาษา Python ห้ามนำหน้าชื่อตัวแปรด้วยตัวเลข (2variable จึงไม่ถูกต้อง)"
+            "explanation": "ภาษา Python ห้ามนำหน้าชื่อตัวแปรด้วยตัวเลข (2variable จึงไม่ถูกต้อง)",
+            "choices_detail": {
+                "A": "my_var: ถูกต้อง (ใช้ตัวอักษรและ underscore ได้)",
+                "B": "2variable: ไม่ถูกต้อง (ห้ามขึ้นต้นด้วยตัวเลข)",
+                "C": "_data: ถูกต้อง (ขึ้นต้นด้วย underscore ได้)",
+                "D": "user_name1: ถูกต้อง (มีตัวเลขต่อท้ายได้)"
+            }
         },
         {
             "question": "ผลลัพธ์ของ print(type(5 / 2)) คือข้อใด?",
             "choices": {"A": "<class 'int'>", "B": "<class 'float'>", "C": "<class 'str'>", "D": "<class 'bool'>"},
             "answer": "B",
-            "explanation": "การหารด้วยเครื่องหมาย / ใน Python 3 จะคืนค่าเป็น float เสมอ (ได้ 2.5)"
+            "explanation": "การหารด้วยเครื่องหมาย / ใน Python 3 จะคืนค่าเป็น float เสมอ (ได้ 2.5)",
+            "choices_detail": {
+                "A": "<class 'int'>: จำนวนเต็ม (เช่น 5, 2)",
+                "B": "<class 'float'>: ทศนิยม (ผลหาร 5 / 2 = 2.5)",
+                "C": "<class 'str'>: ข้อความ/สตริง",
+                "D": "<class 'bool'>: ค่าความจริง (True/False)"
+            }
         },
         {
             "question": "ตัวดำเนินการใดใช้สำหรับหาเศษจากการหาร (Modulus)?",
             "choices": {"A": "//", "B": "/", "C": "%", "D": "**"},
             "answer": "C",
-            "explanation": "เครื่องหมาย % ใช้คำนวณหาเศษจากการหาร"
+            "explanation": "เครื่องหมาย % ใช้คำนวณหาเศษจากการหาร",
+            "choices_detail": {
+                "A": "// : หารเอาส่วน (Floor Division)",
+                "B": "/ : หารได้ผลลัพธ์เป็นทศนิยม",
+                "C": "% : หารเอาเศษ (Modulus)",
+                "D": "** : ยกกำลัง (Exponentiation)"
+            }
         }
     ],
     2: [
@@ -37,19 +55,37 @@ QUESTIONS_BANK = {
             "question": "ผลลัพธ์ของ 5 > 3 and 2 > 8 คืออะไร?",
             "choices": {"A": "True", "B": "False", "C": "None", "D": "Error"},
             "answer": "B",
-            "explanation": "ตัวเชื่อม and จะเป็น True เมื่อเงื่อนไขทั้งสองข้างเป็น True (แต่ 2 > 8 เป็น False)"
+            "explanation": "ตัวเชื่อม and จะเป็น True เมื่อเงื่อนไขทั้งสองข้างเป็น True (แต่ 2 > 8 เป็น False)",
+            "choices_detail": {
+                "A": "True: เป็นจริงทั้งสองข้าง (ในข้อนี้ไม่ใช่)",
+                "B": "False: เป็นเท็จเนื่องจาก 2 > 8 เป็น False",
+                "C": "None: ค่าว่างเปล่า",
+                "D": "Error: ข้อผิดพลาดทางไวยากรณ์"
+            }
         },
         {
             "question": "คำสั่งใดใช้ในการรับค่าข้อมูลจากผู้ใช้ทางคีย์บอร์ด?",
             "choices": {"A": "get()", "B": "read()", "C": "input()", "D": "scan()"},
             "answer": "C",
-            "explanation": "ฟังก์ชัน input() ใช้สำหรับรับข้อความจากผู้ใช้"
+            "explanation": "ฟังก์ชัน input() ใช้สำหรับรับข้อความจากผู้ใช้",
+            "choices_detail": {
+                "A": "get(): ใช้ดึงค่าจาก Dictionary หรือ HTTP Request",
+                "B": "read(): ใช้ใช้อ่านไฟล์ข้อมูล",
+                "C": "input(): รับข้อความจากผู้ใช้ทางคีย์บอร์ด",
+                "D": "scan(): ไม่ใช่ฟังก์ชันมาตรฐานของ Python"
+            }
         },
         {
             "question": "ผลลัพธ์ของ bool('') (ข้อความว่าง) คือข้อใด?",
             "choices": {"A": "True", "B": "False", "C": "None", "D": "Error"},
             "answer": "B",
-            "explanation": "String ว่าง ('') เมื่อแปลงเป็น Boolean จะได้ค่าเป็น False"
+            "explanation": "String ว่าง ('') เมื่อแปลงเป็น Boolean จะได้ค่าเป็น False",
+            "choices_detail": {
+                "A": "True: ข้อความที่มีตัวอักษรอย่างน้อย 1 ตัว",
+                "B": "False: ข้อความว่างเปล่า ('')",
+                "C": "None: ค่านัล/ค่าว่าง",
+                "D": "Error: ไม่เกิดข้อผิดพลาด"
+            }
         }
     ],
     3: [
@@ -57,19 +93,37 @@ QUESTIONS_BANK = {
             "question": "คำสั่ง range(1, 5) จะส่งคืนชุดตัวเลขใด?",
             "choices": {"A": "1, 2, 3, 4, 5", "B": "1, 2, 3, 4", "C": "0, 1, 2, 3, 4", "D": "0, 1, 2, 3, 4, 5"},
             "answer": "B",
-            "explanation": "range(start, stop) จะทำงานถึงค่า stop - 1 จึงได้ 1 ถึง 4"
+            "explanation": "range(start, stop) จะทำงานถึงค่า stop - 1 จึงได้ 1 ถึง 4",
+            "choices_detail": {
+                "A": "1, 2, 3, 4, 5 : เกินค่า stop มา 1 ตัว",
+                "B": "1, 2, 3, 4 : ถูกต้อง (เริ่มจาก 1 ถึง 5-1)",
+                "C": "0, 1, 2, 3, 4 : เริ่มจาก 0 (ไม่ใช่ 1)",
+                "D": "0, 1, 2, 3, 4, 5 : เริ่มจาก 0 และรวมค่า stop"
+            }
         },
         {
             "question": "คำสั่งใดใช้หยุดการทำงานของ Loop ทันที?",
             "choices": {"A": "exit", "B": "stop", "C": "break", "D": "continue"},
             "answer": "C",
-            "explanation": "break ใช้สำหรับออกจากคำสั่งวนซ้ำทันที"
+            "explanation": "break ใช้สำหรับออกจากคำสั่งวนซ้ำทันที",
+            "choices_detail": {
+                "A": "exit: ปิดการทำงานของโปรแกรมทั้งหมด",
+                "B": "stop: ไม่ใช่คีย์เวิร์ดใน Python",
+                "C": "break: ออกจาก Loop ทันที",
+                "D": "continue: ข้ามไปรอบถัดไปของ Loop"
+            }
         },
         {
             "question": "ผลลัพธ์ของ sum(range(1, 4)) คือข้อใด?",
             "choices": {"A": "6", "B": "10", "C": "4", "D": "3"},
             "answer": "A",
-            "explanation": "range(1, 4) คือ [1, 2, 3] ผลรวมคือ 1 + 2 + 3 = 6"
+            "explanation": "range(1, 4) คือ [1, 2, 3] ผลรวมคือ 1 + 2 + 3 = 6",
+            "choices_detail": {
+                "A": "6 : ผลบวกของ 1 + 2 + 3",
+                "B": "10 : ผลบวกถึงเลข 4 (1+2+3+4)",
+                "C": "4 : ค่าจุดหยุดของ range",
+                "D": "3 : จำนวนสมาชิกใน range"
+            }
         }
     ],
     4: [
@@ -77,19 +131,37 @@ QUESTIONS_BANK = {
             "question": "ฟังก์ชันสร้างด้วยคีย์เวิร์ดใดใน Python?",
             "choices": {"A": "function", "B": "def", "C": "define", "D": "func"},
             "answer": "B",
-            "explanation": "ภาษา Python ใช้คีย์เวิร์ด def ในการนิยามฟังก์ชัน"
+            "explanation": "ภาษา Python ใช้คีย์เวิร์ด def ในการนิยามฟังก์ชัน",
+            "choices_detail": {
+                "A": "function: คีย์เวิร์ดในภาษา JavaScript",
+                "B": "def: คีย์เวิร์ดมาตรฐานใน Python (มาจาก define)",
+                "C": "define: คีย์เวิร์ดในภาษา C/C++",
+                "D": "func: คีย์เวิร์ดในภาษา Go/Swift"
+            }
         },
         {
             "question": "ฟังก์ชัน any([False, 0, True]) จะส่งคืนค่าใด?",
             "choices": {"A": "False", "B": "True", "C": "None", "D": "Error"},
             "answer": "B",
-            "explanation": "any() คืนค่า True หากมีสมาชิกใน Iterable เป็นจริงอย่างน้อย 1 ตัว"
+            "explanation": "any() คืนค่า True หากมีสมาชิกใน Iterable เป็นจริงอย่างน้อย 1 ตัว",
+            "choices_detail": {
+                "A": "False: คืนค่านี้เมื่อทุกตัวเป็น False เท่านั้น",
+                "B": "True: เพราะมี True อยู่ใน List 1 ตัว",
+                "C": "None: ค่าว่างเปล่า",
+                "D": "Error: ฟังก์ชันประมวลผลได้ปกติ"
+            }
         },
         {
             "question": "หากไม่ได้ระบุคำสั่ง return ในฟังก์ชัน ฟังก์ชันจะคืนค่าใดออกมารับ?",
             "choices": {"A": "0", "B": "False", "C": "None", "D": "Error"},
             "answer": "C",
-            "explanation": "ฟังก์ชันที่ไม่มี return จะคืนค่า None โดยอัตโนมัติ"
+            "explanation": "ฟังก์ชันที่ไม่มี return จะคืนค่า None โดยอัตโนมัติ",
+            "choices_detail": {
+                "A": "0 : ค่าจำนวนเต็มศูนย์",
+                "B": "False : ค่าบูลีนเท็จ",
+                "C": "None : ค่าเริ่มต้นสำหรับฟังก์ชันที่ไม่มีการ return ค่า",
+                "D": "Error : โปรแกรมทำงานสำเร็จโดยไม่เกิด Error"
+            }
         }
     ],
     5: [
@@ -97,19 +169,37 @@ QUESTIONS_BANK = {
             "question": "การลบข้อมูลใน List โดยระบุ Index ใช้คำสั่งใด?",
             "choices": {"A": "list.remove()", "B": "list.pop()", "C": "list.clear()", "D": "list.delete()"},
             "answer": "B",
-            "explanation": "pop(index) ลบข้อมูลตามตำแหน่ง Index (ถ้าไม่ใส่ตำแหน่งจะลบตัวสุดท้าย)"
+            "explanation": "pop(index) ลบข้อมูลตามตำแหน่ง Index (ถ้าไม่ใส่ตำแหน่งจะลบตัวสุดท้าย)",
+            "choices_detail": {
+                "A": "list.remove(val): ลบตามค่าของข้อมูล ไม่ใช่ตำแหน่ง",
+                "B": "list.pop(index): ลบข้อมูลตามตำแหน่ง Index",
+                "C": "list.clear(): ลบข้อมูลทั้งหมดใน List ออกจนว่างเปล่า",
+                "D": "list.delete(): ไม่ใช่เมธอดของ List (ต้องใช้คำสั่ง del list[index])"
+            }
         },
         {
             "question": "ข้อใดเป็นโครงสร้างข้อมูลชนิด Immutable (แก้ไขสมาชิกไม่ได้)?",
             "choices": {"A": "List", "B": "Dictionary", "C": "Tuple", "D": "Set"},
             "answer": "C",
-            "explanation": "Tuple เมื่อสร้างแล้วจะไม่สามารถแก้ไข เพิ่ม หรือลดสมาชิกได้"
+            "explanation": "Tuple เมื่อสร้างแล้วจะไม่สามารถแก้ไข เพิ่ม หรือลดสมาชิกได้",
+            "choices_detail": {
+                "A": "List: Mutable (แก้ไขข้อมูลได้)",
+                "B": "Dictionary: Mutable (เพิ่ม/แก้ไข Key-Value ได้)",
+                "C": "Tuple: Immutable (ไม่สามารถแก้ไขข้อมูลได้)",
+                "D": "Set: Mutable (เพิ่ม/ลบสมาชิกได้)"
+            }
         },
         {
             "question": "ข้อใดคืนค่าความยาวหรือจำนวนสมาชิกของ List?",
             "choices": {"A": "list.size()", "B": "count(list)", "C": "len(list)", "D": "list.length()"},
             "answer": "C",
-            "explanation": "ฟังก์ชัน len() ใช้หาจำนวนสมาชิกในโครงสร้างข้อมูล"
+            "explanation": "ฟังก์ชัน len() ใช้หาจำนวนสมาชิกในโครงสร้างข้อมูล",
+            "choices_detail": {
+                "A": "list.size(): ใช้ในภาษา Java/C++",
+                "B": "count(list): ไม่ใช่ฟังก์ชันมาตรฐาน",
+                "C": "len(list): ฟังก์ชันหาจำนวนสมาชิกใน Python",
+                "D": "list.length(): ใช้ในภาษา JavaScript"
+            }
         }
     ]
 }
@@ -147,7 +237,11 @@ if "answered" not in st.session_state:
 if "show_review" not in st.session_state:
     st.session_state.show_review = False
 
-# รีเฟรชหน้าจออัตโนมัติเพื่ออัปเดตเวลา
+# เก็บประวัติการตอบของผู้เล่น (สำหรับหน้าเฉลย)
+if "user_results" not in st.session_state:
+    st.session_state.user_results = {}  # key: (level, q_index) -> value: True/False
+
+# รีเฟรชหน้าจอเพื่ออัปเดตเวลา
 if not st.session_state.game_over and not st.session_state.answered:
     st_autorefresh(interval=1000, key="timer_refresh")
 
@@ -160,13 +254,23 @@ st.caption("เกมทบทวนความรู้ภาษา Python ส
 if st.session_state.level > 5 or st.session_state.game_over:
     if st.session_state.show_review:
         # หน้าดูเฉลยคำตอบย้อนหลัง
-        st.subheader("📖 เฉลยคำตอบและเหตุผลทั้งหมด")
+        st.subheader("📖 เฉลยคำตอบและคำอธิบายอย่างละเอียด")
         for lvl in range(1, 6):
             with st.expander(f"🚩 ด่านที่ {lvl}", expanded=True):
-                for idx, q in enumerate(QUESTIONS_BANK[lvl], 1):
-                    st.markdown(f"**ข้อ {idx}: {q['question']}**")
+                for idx, q in enumerate(QUESTIONS_BANK[lvl]):
+                    q_key = (lvl, idx)
+                    is_correct = st.session_state.user_results.get(q_key, False)
+                    
+                    # แสดงว่าตอบถูกหรือตอบผิด
+                    status_tag = "✅ **คุณตอบถูกต้อง**" if is_correct else "❌ **คุณตอบผิด (หรือไม่ได้คะแนน)**"
+                    st.markdown(f"**ข้อ {idx + 1}: {q['question']}** ({status_tag})")
                     st.success(f"✅ **คำตอบที่ถูกต้อง:** ข้อ {q['answer']}. {q['choices'][q['answer']]}")
-                    st.info(f"💡 **เหตุผล:** {q['explanation']}")
+                    st.info(f"💡 **เหตุผลสรุป:** {q['explanation']}")
+                    
+                    # แสดงรายละเอียดความหมายของแต่ละ Choice
+                    st.markdown("**📌 ความหมายของแต่ละตัวเลือก (Choices):**")
+                    for choice_key, detail in q['choices_detail'].items():
+                        st.markdown(f"- **{choice_key}:** {detail}")
                     st.divider()
         
         if st.button("🔙 ย้อนกลับไปหน้าบอกคะแนน", type="primary", use_container_width=True):
@@ -197,6 +301,7 @@ if st.session_state.level > 5 or st.session_state.game_over:
                 st.session_state.game_over = False
                 st.session_state.answered = False
                 st.session_state.show_review = False
+                st.session_state.user_results = {}
                 st.rerun()
     st.stop()
 
@@ -217,10 +322,10 @@ with col3:
 
 st.progress(remaining_time / time_limit)
 
-# กรณีหมดเวลาในด่านนี้ (เปลี่ยนด่านให้อัตโนมัติ)
+# กรณีหมดเวลาในด่านนี้
 if remaining_time <= 0 and not st.session_state.answered:
     st.error("⏰ หมดเวลาสำหรับด่านนี้แล้ว! กำลังนำคุณไปยังด่านถัดไป...")
-    time.sleep(3)
+    time.sleep(2)
     st.session_state.level += 1
     st.session_state.q_index = 0
     st.session_state.attempts = 0
@@ -242,42 +347,58 @@ for key in ["A", "B", "C", "D"]:
     button_label = f"{key}. {choices[key]}"
     if st.button(button_label, key=f"btn_{key}", disabled=st.session_state.answered, use_container_width=True):
         if key == q_data['answer']:
+            # 🟢 กรณีตอบถูก
             score_earned = 10 - (st.session_state.attempts * 2)
             st.session_state.total_score += score_earned
-            st.success(f"✨ ถูกต้องครับ! คุณได้รับ +{score_earned} คะแนน")
-            st.info(f"💡 **คำอธิบาย:** {q_data['explanation']}")
-            st.session_state.answered = True
-            st.toast("กำลังไปข้อถัดไปอัตโนมัติ...", icon="⏳")
+            st.toast(f"✅ ถูกต้องครับ! ได้รับ +{score_earned} คะแนน", icon="🎉")
+            
+            # บันทึกประวัติว่าตอบถูก
+            q_key = (st.session_state.level, st.session_state.q_index)
+            st.session_state.user_results[q_key] = True
+            
+            # ข้ามไปข้อถัดไปทันที (ไม่ต้องรอเวลา)
+            st.session_state.q_index += 1
+            st.session_state.attempts = 0
+            st.session_state.answered = False
+            
+            if st.session_state.q_index >= len(current_level_questions):
+                st.session_state.level += 1
+                st.session_state.q_index = 0
+                st.session_state.start_time = time.time()
+                
             st.rerun()
         else:
+            # 🔴 กรณีตอบผิด
             st.session_state.attempts += 1
             if st.session_state.attempts < 3:
                 st.error(f"❌ ยังไม่ถูกต้อง! ตอบผิดไปแล้ว {st.session_state.attempts} ครั้ง (เหลือโอกาสอีก {3 - st.session_state.attempts} ครั้ง)")
             else:
+                # บันทึกประวัติว่าตอบผิด
+                q_key = (st.session_state.level, st.session_state.q_index)
+                st.session_state.user_results[q_key] = False
                 st.session_state.answered = True
-                st.toast("กำลังไปข้อถัดไปอัตโนมัติ...", icon="⏳")
                 st.rerun()
 
 # ==========================================
-# 4. แสดงเฉลยค้างไว้ 4 วินาที แล้วข้ามข้อให้อัตโนมัติ
+# 4. หน้าเฉลยเฉพาะกรณีตอบผิดครบ 3 ครั้ง
 # ==========================================
 if st.session_state.answered:
-    if st.session_state.attempts >= 3:
-        st.error("❌ ตอบผิดครบ 3 ครั้งแล้ว คุณไม่ได้คะแนนในข้อนี้")
-        st.warning(f"🔑 **คำตอบที่ถูกต้องคือข้อ {q_data['answer']}. {choices[q_data['answer']]}**")
-        st.info(f"💡 **เหตุผลเฉลยอย่างละเอียด:** {q_data['explanation']}")
+    st.error("❌ ตอบผิดครบ 3 ครั้งแล้ว คุณไม่ได้คะแนนในข้อนี้")
+    st.warning(f"🔑 **คำตอบที่ถูกต้องคือข้อ {q_data['answer']}. {choices[q_data['answer']]}**")
+    st.info(f"💡 **เหตุผล:** {q_data['explanation']}")
     
-    st.caption("⏳ ระบบกำลังเปลี่ยนไปข้อถัดไปให้อัตโนมัติใน 4 วินาที...")
-    time.sleep(4)  # ค้างหน้าเฉลยนานขึ้น (4 วินาที) ให้ผู้อ่านเข้าใจ
+    st.markdown("**📌 ความหมายของแต่ละตัวเลือก:**")
+    for choice_key, detail in q_data['choices_detail'].items():
+        st.markdown(f"- **{choice_key}:** {detail}")
     
-    # อัปเดตเพื่อไปยังข้อถัดไป หรือด่านถัดไป
-    st.session_state.q_index += 1
-    st.session_state.attempts = 0
-    st.session_state.answered = False
-    
-    if st.session_state.q_index >= len(current_level_questions):
-        st.session_state.level += 1
-        st.session_state.q_index = 0
-        st.session_state.start_time = time.time()
+    if st.button("ข้ามไปข้อถัดไป ➡️", type="primary", use_container_width=True):
+        st.session_state.q_index += 1
+        st.session_state.attempts = 0
+        st.session_state.answered = False
         
-    st.rerun()
+        if st.session_state.q_index >= len(current_level_questions):
+            st.session_state.level += 1
+            st.session_state.q_index = 0
+            st.session_state.start_time = time.time()
+            
+        st.rerun()
