@@ -249,26 +249,25 @@ st.title("🐍 Python Code Quest")
 st.caption("เกมทบทวนความรู้ภาษา Python สำหรับนิสิต")
 
 # ==========================================
-# 1. หน้าจบเกม / สรุปคะแนน / ดูเฉลย
+# 1. หน้าจบเกม / สรุปคะแนน / ดูเฉลยทั้งหมด
 # ==========================================
 if st.session_state.level > 5 or st.session_state.game_over:
     if st.session_state.show_review:
-        # หน้าดูเฉลยคำตอบย้อนหลัง
-        st.subheader("📖 เฉลยคำตอบและคำอธิบายอย่างละเอียด")
+        # หน้าดูเฉลยคำตอบย้อนหลังทั้งหมด
+        st.subheader("📖 เฉลยคำตอบและคำอธิบายตัวเลือกทั้งหมด")
         for lvl in range(1, 6):
             with st.expander(f"🚩 ด่านที่ {lvl}", expanded=True):
                 for idx, q in enumerate(QUESTIONS_BANK[lvl]):
                     q_key = (lvl, idx)
                     is_correct = st.session_state.user_results.get(q_key, False)
                     
-                    # แสดงว่าตอบถูกหรือตอบผิด
                     status_tag = "✅ **คุณตอบถูกต้อง**" if is_correct else "❌ **คุณตอบผิด (หรือไม่ได้คะแนน)**"
                     st.markdown(f"**ข้อ {idx + 1}: {q['question']}** ({status_tag})")
                     st.success(f"✅ **คำตอบที่ถูกต้อง:** ข้อ {q['answer']}. {q['choices'][q['answer']]}")
                     st.info(f"💡 **เหตุผลสรุป:** {q['explanation']}")
                     
-                    # แสดงรายละเอียดความหมายของแต่ละ Choice
-                    st.markdown("**📌 ความหมายของแต่ละตัวเลือก (Choices):**")
+                    # รวบรวมความหมายและการใช้งานของแต่ละตัวเลือกมาขึ้นที่นี่ทีเดียว
+                    st.markdown("**📌 ความหมายและการใช้งานของแต่ละตัวเลือก (Choices):**")
                     for choice_key, detail in q['choices_detail'].items():
                         st.markdown(f"- **{choice_key}:** {detail}")
                     st.divider()
@@ -276,34 +275,6 @@ if st.session_state.level > 5 or st.session_state.game_over:
         if st.button("🔙 ย้อนกลับไปหน้าบอกคะแนน", type="primary", use_container_width=True):
             st.session_state.show_review = False
             st.rerun()
-    else:
-        # หน้าสรุปคะแนน
-        st.balloons()
-        st.success("🎉 ยินดีด้วย! คุณเล่นเกมจบเรียบร้อยแล้ว")
-        st.metric(label="🏆 คะแนนรวมทั้งหมด", value=f"{st.session_state.total_score} / 150 คะแนน")
-        
-        # แสดงระดับคะแนน
-        rank_msg = get_rank_message(st.session_state.total_score)
-        st.info(rank_msg)
-        
-        col_rev, col_restart = st.columns(2)
-        with col_rev:
-            if st.button("📖 ดูเฉลยคำตอบทั้งหมด", use_container_width=True):
-                st.session_state.show_review = True
-                st.rerun()
-        with col_restart:
-            if st.button("🔄 เริ่มเล่นใหม่อีกครั้ง", type="primary", use_container_width=True):
-                st.session_state.level = 1
-                st.session_state.q_index = 0
-                st.session_state.total_score = 0
-                st.session_state.attempts = 0
-                st.session_state.start_time = time.time()
-                st.session_state.game_over = False
-                st.session_state.answered = False
-                st.session_state.show_review = False
-                st.session_state.user_results = {}
-                st.rerun()
-    st.stop()
 
 # ==========================================
 # 2. ตัวนับเวลาด่านละ 2 นาที (120 วินาที)
@@ -350,22 +321,13 @@ for key in ["A", "B", "C", "D"]:
             # 🟢 กรณีตอบถูก
             score_earned = 10 - (st.session_state.attempts * 2)
             st.session_state.total_score += score_earned
-            st.toast(f"✅ ถูกต้องครับ! ได้รับ +{score_earned} คะแนน", icon="🎉")
             
             # บันทึกประวัติว่าตอบถูก
             q_key = (st.session_state.level, st.session_state.q_index)
             st.session_state.user_results[q_key] = True
             
-            # ข้ามไปข้อถัดไปทันที (ไม่ต้องรอเวลา)
-            st.session_state.q_index += 1
-            st.session_state.attempts = 0
-            st.session_state.answered = False
-            
-            if st.session_state.q_index >= len(current_level_questions):
-                st.session_state.level += 1
-                st.session_state.q_index = 0
-                st.session_state.start_time = time.time()
-                
+            st.session_state.is_correct_this_turn = True
+            st.session_state.answered = True
             st.rerun()
         else:
             # 🔴 กรณีตอบผิด
@@ -376,8 +338,43 @@ for key in ["A", "B", "C", "D"]:
                 # บันทึกประวัติว่าตอบผิด
                 q_key = (st.session_state.level, st.session_state.q_index)
                 st.session_state.user_results[q_key] = False
+                st.session_state.is_correct_this_turn = False
                 st.session_state.answered = True
                 st.rerun()
+
+# ==========================================
+# 4. แสดงผลลัพธ์หลังจากกดตอบ (ในระหว่างเล่น)
+# ==========================================
+if st.session_state.answered:
+    # --------------------------------------
+    # กรณีตอบถูก (แสดงกล่องสีเขียว ✅)
+    # --------------------------------------
+    if getattr(st.session_state, "is_correct_this_turn", False):
+        score_earned = 10 - (st.session_state.attempts * 2)
+        st.success(f"✅ **ถูกต้องครับ! ได้รับ +{score_earned} คะแนน**")
+        st.info(f"💡 **เหตุผลสรุป:** {q_data['explanation']}")
+    
+    # --------------------------------------
+    # กรณีตอบผิดครบ 3 ครั้ง
+    # --------------------------------------
+    else:
+        st.error("❌ ตอบผิดครบ 3 ครั้งแล้ว คุณไม่ได้คะแนนในข้อนี้")
+        st.warning(f"🔑 **คำตอบที่ถูกต้องคือข้อ {q_data['answer']}. {choices[q_data['answer']]}**")
+        st.info(f"💡 **เหตุผล:** {q_data['explanation']}")
+
+    # ปุ่มสำหรับกดข้ามไปข้อถัดไป
+    if st.button("ข้อถัดไป ➡️", type="primary", use_container_width=True):
+        st.session_state.q_index += 1
+        st.session_state.attempts = 0
+        st.session_state.answered = False
+        st.session_state.is_correct_this_turn = False
+        
+        if st.session_state.q_index >= len(current_level_questions):
+            st.session_state.level += 1
+            st.session_state.q_index = 0
+            st.session_state.start_time = time.time()
+            
+        st.rerun()
 
 # ==========================================
 # 4. หน้าเฉลยเฉพาะกรณีตอบผิดครบ 3 ครั้ง
