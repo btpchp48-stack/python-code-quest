@@ -1,7 +1,4 @@
 import streamlit as st
-# (นำโค้ดภาษา Python ในข้อ 3 มาวางทั้งหมดตรงนี้)
-
-import streamlit as st
 import time
 from streamlit_autorefresh import st_autorefresh
 
@@ -13,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# คลังคำถาม 5 ด่าน
+# คลังคำถาม 5 ด่าน (รวม 15 ข้อ)
 QUESTIONS_BANK = {
     1: [
         {
@@ -83,7 +80,7 @@ QUESTIONS_BANK = {
             "explanation": "ภาษา Python ใช้คีย์เวิร์ด def ในการนิยามฟังก์ชัน"
         },
         {
-            "question": "ฟังก์ชัน any([False, Zero, True]) จะส่งคืนค่าใด?",
+            "question": "ฟังก์ชัน any([False, 0, True]) จะส่งคืนค่าใด?",
             "choices": {"A": "False", "B": "True", "C": "None", "D": "Error"},
             "answer": "B",
             "explanation": "any() คืนค่า True หากมีสมาชิกใน Iterable เป็นจริงอย่างน้อย 1 ตัว"
@@ -117,15 +114,28 @@ QUESTIONS_BANK = {
     ]
 }
 
-# กำหนดค่าเริ่มต้น Session State
+# ฟังก์ชันประเมินระดับคะแนนพร้อมข้อความติดตลก (6 ระดับ)
+def get_rank_message(score):
+    if score == 150:
+        return "🏆 ระดับ: เทพเจ้า Python ไร้เทียมทาน\n\n\"โอ้โห นี่มันอนาคตนักเขียนโค้ดมือหนึ่งของโลก! บอร์ดบริหาร Google กำลังเตรียมเก้าอี้รอคุณอยู่!\""
+    elif score >= 120:
+        return "🥇 ระดับ: เซียนบั๊ก ผู้ไร้พ่าย\n\n\"เก่งระดับนี้ ภาษา Python นึกว่าคุณเป็นคนคิดค้นเองซะอีก! นั่งชิวส่งอาจารย์ได้เลย!\""
+    elif score >= 90:
+        return "🥈 ระดับ: โปรแกรมเมอร์สายสู้ชีวิต\n\n\"รอดมาได้แบบเท่ๆ โค้ดผ่าน รันผ่าน สมองก็เกือบผ่านเหมือนกัน! ทำได้ดีมาก!\""
+    elif score >= 60:
+        return "🥉 ระดับ: นักรบ StackOverflow\n\n\"พอตัวอยู่นะ! ถือว่าเอาตัวรอดได้ แม้บางข้อจะใช้ดวงนำทางไปบ้างก็เหอะ!\""
+    elif score >= 30:
+        return "⚠️ ระดับ: โค้ดติด Error สายตาเริ่มพร่ามัว\n\n\"เกือบขิต! กาข้อไหนไปบ้างยังจำไม่ได้เลยใช่ไหมเนี่ย? ไปพักจิบกาแฟแล้วมาซ่อมด่วน!\""
+    else:
+        return "☠️ ระดับ: สลบคาคีย์บอร์ด\n\n\"แม่บอกแล้วไง อย่าหลับตอนเรียนน่ะ!! ตื่นมาอ่านเฉลยเดี๋ยวนี้เลยนะ!\""
+
+# กำหนด Session State
 if "level" not in st.session_state:
     st.session_state.level = 1
 if "q_index" not in st.session_state:
     st.session_state.q_index = 0
 if "total_score" not in st.session_state:
     st.session_state.total_score = 0
-if "level_score" not in st.session_state:
-    st.session_state.level_score = 0
 if "attempts" not in st.session_state:
     st.session_state.attempts = 0
 if "start_time" not in st.session_state:
@@ -134,38 +144,69 @@ if "game_over" not in st.session_state:
     st.session_state.game_over = False
 if "answered" not in st.session_state:
     st.session_state.answered = False
+if "show_review" not in st.session_state:
+    st.session_state.show_review = False
 
-# รีเฟรชหน้าจอทุกๆ 1 วินาทีเพื่ออัปเดตเวลา
-if not st.session_state.game_over:
+# รีเฟรชหน้าจออัตโนมัติเพื่ออัปเดตเวลา
+if not st.session_state.game_over and not st.session_state.answered:
     st_autorefresh(interval=1000, key="timer_refresh")
 
 st.title("🐍 Python Code Quest")
 st.caption("เกมทบทวนความรู้ภาษา Python สำหรับนิสิต")
 
-# ตรวจสอบการจบเกม
+# ==========================================
+# 1. หน้าจบเกม / สรุปคะแนน / ดูเฉลย
+# ==========================================
 if st.session_state.level > 5 or st.session_state.game_over:
-    st.balloons()
-    st.success("🎉 ยินดีด้วย! คุณเล่นเกมจบเรียบร้อยแล้ว")
-    st.metric(label="🏆 คะแนนรวมทั้งหมด", value=f"{st.session_state.total_score} / 150 คะแนน")
-    
-    if st.button("🔄 เริ่มเล่นใหม่อีกครั้ง", use_container_width=True):
-        st.session_state.level = 1
-        st.session_state.q_index = 0
-        st.session_state.total_score = 0
-        st.session_state.level_score = 0
-        st.session_state.attempts = 0
-        st.session_state.start_time = time.time()
-        st.session_state.game_over = False
-        st.session_state.answered = False
-        st.rerun()
+    if st.session_state.show_review:
+        # หน้าดูเฉลยคำตอบย้อนหลัง
+        st.subheader("📖 เฉลยคำตอบและเหตุผลทั้งหมด")
+        for lvl in range(1, 6):
+            with st.expander(f"🚩 ด่านที่ {lvl}", expanded=True):
+                for idx, q in enumerate(QUESTIONS_BANK[lvl], 1):
+                    st.markdown(f"**ข้อ {idx}: {q['question']}**")
+                    st.success(f"✅ **คำตอบที่ถูกต้อง:** ข้อ {q['answer']}. {q['choices'][q['answer']]}")
+                    st.info(f"💡 **เหตุผล:** {q['explanation']}")
+                    st.divider()
+        
+        if st.button("🔙 ย้อนกลับไปหน้าบอกคะแนน", type="primary", use_container_width=True):
+            st.session_state.show_review = False
+            st.rerun()
+    else:
+        # หน้าสรุปคะแนน
+        st.balloons()
+        st.success("🎉 ยินดีด้วย! คุณเล่นเกมจบเรียบร้อยแล้ว")
+        st.metric(label="🏆 คะแนนรวมทั้งหมด", value=f"{st.session_state.total_score} / 150 คะแนน")
+        
+        # แสดงระดับคะแนน
+        rank_msg = get_rank_message(st.session_state.total_score)
+        st.info(rank_msg)
+        
+        col_rev, col_restart = st.columns(2)
+        with col_rev:
+            if st.button("📖 ดูเฉลยคำตอบทั้งหมด", use_container_width=True):
+                st.session_state.show_review = True
+                st.rerun()
+        with col_restart:
+            if st.button("🔄 เริ่มเล่นใหม่อีกครั้ง", type="primary", use_container_width=True):
+                st.session_state.level = 1
+                st.session_state.q_index = 0
+                st.session_state.total_score = 0
+                st.session_state.attempts = 0
+                st.session_state.start_time = time.time()
+                st.session_state.game_over = False
+                st.session_state.answered = False
+                st.session_state.show_review = False
+                st.rerun()
     st.stop()
 
-# คำนวณเวลานับถอยหลัง (120 วินาที / ด่าน)
+# ==========================================
+# 2. ตัวนับเวลาด่านละ 2 นาที (120 วินาที)
+# ==========================================
 time_limit = 120
 elapsed_time = time.time() - st.session_state.start_time
 remaining_time = max(0, int(time_limit - elapsed_time))
 
-# แสดงสถานะด่านและเวลา
 col1, col2, col3 = st.columns(3)
 with col1:
     st.metric("🚩 ด่านที่", f"{st.session_state.level} / 5")
@@ -176,26 +217,26 @@ with col3:
 
 st.progress(remaining_time / time_limit)
 
-# หากหมดเวลาในด่านนี้
-if remaining_time <= 0:
-    st.warning("⏰ หมดเวลาสำหรับด่านนี้แล้ว! กำลังเปลี่ยนไปยังด่านถัดไป...")
-    time.sleep(2)
+# กรณีหมดเวลาในด่านนี้ (เปลี่ยนด่านให้อัตโนมัติ)
+if remaining_time <= 0 and not st.session_state.answered:
+    st.error("⏰ หมดเวลาสำหรับด่านนี้แล้ว! กำลังนำคุณไปยังด่านถัดไป...")
+    time.sleep(3)
     st.session_state.level += 1
     st.session_state.q_index = 0
     st.session_state.attempts = 0
     st.session_state.start_time = time.time()
-    st.session_state.answered = False
     st.rerun()
 
-# แสดงคำถามปัจจุบัน
+# ==========================================
+# 3. แสดงข้อคำถามและการตอบ
+# ==========================================
 current_level_questions = QUESTIONS_BANK[st.session_state.level]
 q_data = current_level_questions[st.session_state.q_index]
 
 st.markdown("---")
 st.subheader(f"ข้อที่ {st.session_state.q_index + 1} / {len(current_level_questions)}")
-st.markdown(f"**{q_data['question']}**")
+st.markdown(f"### {q_data['question']}")
 
-# ปุ่มตัวเลือก A, B, C, D (ปุ่มใหญ่รองรับนิ้วกดบนมือถือ)
 choices = q_data['choices']
 for key in ["A", "B", "C", "D"]:
     button_label = f"{key}. {choices[key]}"
@@ -203,30 +244,40 @@ for key in ["A", "B", "C", "D"]:
         if key == q_data['answer']:
             score_earned = 10 - (st.session_state.attempts * 2)
             st.session_state.total_score += score_earned
-            st.session_state.level_score += score_earned
-            st.success(f"✨ ถูกต้องครับ! ได้รับ +{score_earned} คะแนน")
-            st.info(f"💡 **เหตุผล:** {q_data['explanation']}")
+            st.success(f"✨ ถูกต้องครับ! คุณได้รับ +{score_earned} คะแนน")
+            st.info(f"💡 **คำอธิบาย:** {q_data['explanation']}")
             st.session_state.answered = True
+            st.toast("กำลังไปข้อถัดไปอัตโนมัติ...", icon="⏳")
+            st.rerun()
         else:
             st.session_state.attempts += 1
             if st.session_state.attempts < 3:
                 st.error(f"❌ ยังไม่ถูกต้อง! ตอบผิดไปแล้ว {st.session_state.attempts} ครั้ง (เหลือโอกาสอีก {3 - st.session_state.attempts} ครั้ง)")
             else:
-                st.error("❌ ตอบผิดครบ 3 ครั้งแล้ว คุณไม่ได้คะแนนในข้อนี้")
-                st.info(f"🔑 **คำตอบที่ถูกต้องคือข้อ {q_data['answer']}**\n\n💡 **เหตุผล:** {q_data['explanation']}")
                 st.session_state.answered = True
+                st.toast("กำลังไปข้อถัดไปอัตโนมัติ...", icon="⏳")
+                st.rerun()
 
-# ปุ่มไปข้อถัดไป
+# ==========================================
+# 4. แสดงเฉลยค้างไว้ 4 วินาที แล้วข้ามข้อให้อัตโนมัติ
+# ==========================================
 if st.session_state.answered:
-    if st.button("ข้อถัดไป ➡️", type="primary", use_container_width=True):
-        st.session_state.q_index += 1
-        st.session_state.attempts = 0
-        st.session_state.answered = False
+    if st.session_state.attempts >= 3:
+        st.error("❌ ตอบผิดครบ 3 ครั้งแล้ว คุณไม่ได้คะแนนในข้อนี้")
+        st.warning(f"🔑 **คำตอบที่ถูกต้องคือข้อ {q_data['answer']}. {choices[q_data['answer']]}**")
+        st.info(f"💡 **เหตุผลเฉลยอย่างละเอียด:** {q_data['explanation']}")
+    
+    st.caption("⏳ ระบบกำลังเปลี่ยนไปข้อถัดไปให้อัตโนมัติใน 4 วินาที...")
+    time.sleep(4)  # ค้างหน้าเฉลยนานขึ้น (4 วินาที) ให้ผู้อ่านเข้าใจ
+    
+    # อัปเดตเพื่อไปยังข้อถัดไป หรือด่านถัดไป
+    st.session_state.q_index += 1
+    st.session_state.attempts = 0
+    st.session_state.answered = False
+    
+    if st.session_state.q_index >= len(current_level_questions):
+        st.session_state.level += 1
+        st.session_state.q_index = 0
+        st.session_state.start_time = time.time()
         
-        # เมื่อทำครบทุกข้อในด่าน
-        if st.session_state.q_index >= len(current_level_questions):
-            st.session_state.level += 1
-            st.session_state.q_index = 0
-            st.session_state.start_time = time.time()
-            
-        st.rerun()
+    st.rerun()
