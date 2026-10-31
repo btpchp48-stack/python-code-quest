@@ -350,22 +350,13 @@ for key in ["A", "B", "C", "D"]:
             # 🟢 กรณีตอบถูก
             score_earned = 10 - (st.session_state.attempts * 2)
             st.session_state.total_score += score_earned
-            st.toast(f"✅ ถูกต้องครับ! ได้รับ +{score_earned} คะแนน", icon="🎉")
             
             # บันทึกประวัติว่าตอบถูก
             q_key = (st.session_state.level, st.session_state.q_index)
             st.session_state.user_results[q_key] = True
             
-            # ข้ามไปข้อถัดไปทันที (ไม่ต้องรอเวลา)
-            st.session_state.q_index += 1
-            st.session_state.attempts = 0
-            st.session_state.answered = False
-            
-            if st.session_state.q_index >= len(current_level_questions):
-                st.session_state.level += 1
-                st.session_state.q_index = 0
-                st.session_state.start_time = time.time()
-                
+            st.session_state.is_correct_this_turn = True
+            st.session_state.answered = True
             st.rerun()
         else:
             # 🔴 กรณีตอบผิด
@@ -376,25 +367,36 @@ for key in ["A", "B", "C", "D"]:
                 # บันทึกประวัติว่าตอบผิด
                 q_key = (st.session_state.level, st.session_state.q_index)
                 st.session_state.user_results[q_key] = False
+                st.session_state.is_correct_this_turn = False
                 st.session_state.answered = True
                 st.rerun()
 
 # ==========================================
-# 4. หน้าเฉลยเฉพาะกรณีตอบผิดครบ 3 ครั้ง
+# 4. แสดงผลลัพธ์หลังจากกดตอบ (ในระหว่างเล่น)
 # ==========================================
 if st.session_state.answered:
-    st.error("❌ ตอบผิดครบ 3 ครั้งแล้ว คุณไม่ได้คะแนนในข้อนี้")
-    st.warning(f"🔑 **คำตอบที่ถูกต้องคือข้อ {q_data['answer']}. {choices[q_data['answer']]}**")
-    st.info(f"💡 **เหตุผล:** {q_data['explanation']}")
+    # --------------------------------------
+    # กรณีตอบถูก (แสดงกล่องสีเขียว ✅)
+    # --------------------------------------
+    if getattr(st.session_state, "is_correct_this_turn", False):
+        score_earned = 10 - (st.session_state.attempts * 2)
+        st.success(f"✅ **ถูกต้องครับ! ได้รับ +{score_earned} คะแนน**")
+        st.info(f"💡 **เหตุผลสรุป:** {q_data['explanation']}")
     
-    st.markdown("**📌 ความหมายของแต่ละตัวเลือก:**")
-    for choice_key, detail in q_data['choices_detail'].items():
-        st.markdown(f"- **{choice_key}:** {detail}")
-    
-    if st.button("ข้ามไปข้อถัดไป ➡️", type="primary", use_container_width=True):
+    # --------------------------------------
+    # กรณีตอบผิดครบ 3 ครั้ง
+    # --------------------------------------
+    else:
+        st.error("❌ ตอบผิดครบ 3 ครั้งแล้ว คุณไม่ได้คะแนนในข้อนี้")
+        st.warning(f"🔑 **คำตอบที่ถูกต้องคือข้อ {q_data['answer']}. {choices[q_data['answer']]}**")
+        st.info(f"💡 **เหตุผล:** {q_data['explanation']}")
+
+    # ปุ่มสำหรับกดข้ามไปข้อถัดไป
+    if st.button("ข้อถัดไป ➡️", type="primary", use_container_width=True):
         st.session_state.q_index += 1
         st.session_state.attempts = 0
         st.session_state.answered = False
+        st.session_state.is_correct_this_turn = False
         
         if st.session_state.q_index >= len(current_level_questions):
             st.session_state.level += 1
