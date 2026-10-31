@@ -108,4 +108,41 @@ QUESTIONS_BANK = {
             "explanation": "break ใช้สำหรับออกจากคำสั่งวนซ้ำทันที",
             "choices_detail": {
                 "A": "exit: ปิดการทำงานของโปรแกรมทั้งหมด",
-                "B": "stop: ไม่ใช่คีย์
+                "B": "stop: ไม่ใช่คีย์เวิร์ดใน Python",
+                "C": "break: ออกจาก Loop ทันที",
+                "D": "continue: ข้ามไปรอบถัดไปของ Loop"
+            }
+        },
+        {
+            "question": "ผลลัพธ์ของ sum(range(1, 4)) คือข้อใด?",
+            "choices": {"A": "6", "B": "10", "C": "4", "D": "3"},
+            "answer": "A",
+            "explanation": "range(1, 4) คือ [1, 2, 3] ผลรวมคือ 1 + 2 + 3 = 6",
+            "choices_detail": {
+                "A": "6 : ผลบวกของ 1 + 2 + 3",
+                "B": "10 : ผลบวกถึงเลข 4 (1+2+3+4)",
+                "C": "4 : ค่าจุดหยุดของ range",
+                "D": "3 : จำนวนสมาชิกใน range"
+            }
+        }
+    ],
+    4: [
+        {
+            "question": "ฟังก์ชันสร้างด้วยคีย์เวิร์ดใดใน Python?",
+            "choices": {"A": "function", "B": "def", "C": "define", "D": "func"},
+            "answer": "B",
+            "explanation": "ภาษา Python ใช้คีย์เวิร์ด def ในการนิยามฟังก์ชัน",
+            "choices_detail": {
+                "A": "function: คีย์เวิร์ดในภาษา JavaScript",
+                "B": "def: คีย์เวิร์ดมาตรฐานใน Python (มาจาก define)",
+                "C": "define: คีย์เวิร์ดในภาษา C/C++",
+                "D": "func: คีย์เวิร์ดในภาษา Go/Swift"
+            }
+        },
+        {
+            "question": "ฟังก์ชัน any([False, 0, True]) จะส่งคืนค่าใด?",
+            "choices": {"A": "False", "B": "True", "C": "None", "D": "Error"},
+            "answer": "B",
+            "explanation": "any() คืนค่า True หากมีสมาชิกใน Iterable เป็นจริงอย่างน้อย 1 ตัว",
+            "choices_detail": {
+                "A": "False: คืนค่านี้เมื่อทุกตัวเป็น False เท
